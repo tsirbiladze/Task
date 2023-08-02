@@ -1,0 +1,91 @@
+# simple-admin
+Simple Admin for the Phalcon PHP Framework
+
+![github-small](https://sitchi.dev/sa4.png)
+![github-small](https://sitchi.dev/sa3.png)
+
+### Demo Site
+https://simple-admin.sitchi.dev/
+
+user: demo@sitchi.dev
+
+pass: Demo2020
+
+## Get Started
+
+### Requirements
+
+* PHP >= 7.3
+* [Apache][1] Web Server with [mod_rewrite][2] enabled or [Nginx][3] Web Server
+* Phalcon >= 4.0.6 [Phalcon Framework release][4] extension enabled
+* [MariaDB][5] >= 10.3
+
+### Installation
+
+##### Install via composer create-project
+
+```bash
+composer create-project sitchi/simple-admin
+```
+
+##### Install via git clone
+
+```bash
+git clone https://github.com/sitchi/simple-admin
+
+composer install
+```
+
+After the installation
+
+1. Edit `app/config/config.php` file with your DB connection information
+2. Run DB migrations `vendor/bin/phalcon-migrations run`
+3. Write permissions of the cache, logs directory `sudo chmod -R 0777 cache/ logs/`
+
+## Nginix Conf 
+
+Add the following Nginx configuration to your `/etc/nginx/sites-available/default` file, or a new file in `/etc/nginx/sites-available/`, and then create a symbolic link to it in `/etc/nginx/sites-enabled/`. 
+
+Don't forget to replace `localhost` with your own domain name or IP address, and `/var/www/simple-admin/public` with the actual path to your application's public directory.
+
+```nginx
+    server {
+        listen 80;
+        server_name localhost;
+        root /var/www/simple-admin/public;
+
+        index index.php;
+
+        location / {
+            try_files $uri $uri/ /index.php$is_args$args;
+            autoindex on;
+        }
+
+        location ~ \.php$ {
+            try_files $uri =404;
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+            fastcgi_index index.php;
+            include fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_intercept_errors off;
+            fastcgi_buffer_size 16k;
+            fastcgi_buffers 4 16k;
+        }
+
+        location ~ /\.ht {
+            deny all;
+        }
+    }
+```
+
+
+## License
+
+The Simple Admin is under the MIT License, you can view the license [here](https://github.com/sitchi/simple-admin/blob/master/LICENSE).
+
+[1]: http://httpd.apache.org/
+[2]: http://httpd.apache.org/docs/current/mod/mod_rewrite.html
+[3]: http://nginx.org/
+[4]: https://github.com/phalcon/cphalcon/releases
+[5]: https://mariadb.org/
